@@ -10,10 +10,9 @@ namespace Spark {
         Button(int width, int height);
         void clicked_connect(clicked_callback_func func);
         void render() override;
+        bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
 
         private:
         clicked_callback_func clicked_callback;
-
-        void register_callbacks() override;
     };
 }

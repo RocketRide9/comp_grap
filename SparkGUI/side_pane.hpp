@@ -15,6 +15,7 @@ namespace Spark {
         SidePane(DockSide side, int size, int padding);
         void render() override;
         void add_child(Widget *widget);
+        bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
 
         private:
         std::vector<Widget *> children;
@@ -24,6 +25,5 @@ namespace Spark {
         Orientation orientation = VERTICAL;
         int padding;
 
-        void register_callbacks() override;
     };
 }

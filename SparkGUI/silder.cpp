@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <iostream>
 #include "rect.hpp"
+#include "side_pane.hpp"
 #include "slider.hpp"
 #include "spark_core.hpp"
 
@@ -8,7 +10,6 @@ using namespace std;
 namespace Spark {
     Slider::Slider(int width, int height) {
         content_bounds = Rect(0, 0, width, height);
-        register_callbacks();
     }
     void Slider::clicked_connect(clicked_callback_func func) {
         clicked_callback = func;
@@ -49,28 +50,34 @@ namespace Spark {
 
         glPopMatrix();
     }
+    bool Slider::handle_click (GLFWwindow* window, int button, int action, int mods) {
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+            double _x, _y;
+            glfwGetCursorPos(window, &_x, &_y);
+            if (content_bounds.contains(_x, _y)) {
+                if (clicked_callback != NULL) {
+                    clicked_callback(this);
+                }
 
-    // Private
-    void Slider::register_callbacks() {
-        MouseButtonCallbackFunc f = [this](GLFWwindow* window, int button,
-                                           int action, int mods) {
-            if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-                double _x, _y;
-                glfwGetCursorPos(window, &_x, &_y);
-                cout << _x << " " << _y << endl;
+                auto slider_update = [this, window]{
+                    double _x, _y;
+                    glfwGetCursorPos(window, &_x, &_y);
+                    int x = _x;
+                    x = clamp(x, content_bounds.x1, content_bounds.x2);
 
-                if (content_bounds.contains(_x, _y)) {
-                    double value_new = (_x - content_bounds.x1) / content_bounds.get_width();
+                    double value_new = 1. * (x-content_bounds.x1) / content_bounds.get_width();
                     this->value = value_new;
                     if (clicked_callback != NULL) {
                         clicked_callback(this);
                     }
-                    return true;
-                }
+                };
+                loop_func_id = Spark::loop_add(slider_update);
+                return true;
             }
+        } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+            Spark::loop_remove(loop_func_id);
+        }
 
-            return false;
-        };
-        add_mouse_callback(f);
+        return false;
     }
 }

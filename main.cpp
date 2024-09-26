@@ -1,5 +1,6 @@
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
+#include "SparkGUI/spark_core.hpp"
 #include "SparkGUI/spark_gui.hpp"
 #include <iostream>
 #include <ostream>
@@ -30,10 +31,11 @@ struct ColoredGroup {
 };
 
 vector <GLPoint> Points;
-vector <GLTriangle> Triangles;
 
 vector <ColoredGroup> colored_groups = {};
-unsigned int current_group = 0;
+unsigned int active_group = 0;
+
+GLubyte active_mask[32][32];
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -42,24 +44,21 @@ void display() {
     glPointSize(2);
 
     glBegin(GL_POINTS);
-    for (int i = 0; i < Points.size(); i++)
-        glVertex2f(Points[i].x, Points[i].y);
+    int points_size = Points.size();
+    for (int i = 0; i < points_size%3; i++) {
+        int idx = points_size-1-i;
+        glVertex2f(Points[idx].x, Points[idx].y);
+    }
     glEnd();
 
     // Отрисовка неактивных примитивов
-    GLubyte mask[32][32];
-    for (int y = 0; y < 32; y++) {
-        for (int x = 0; x < 32; x++) {
-            mask[y][x] = (y-x)%2;
-        }
-    }
-    glPolygonStipple(&mask[0][0]);
-    glEnable(GL_POLYGON_STIPPLE);
 
+    glPolygonStipple(&active_mask[0][0]);
+    glEnable(GL_POLYGON_STIPPLE);
     glBegin(GL_TRIANGLES);
     for (int i = 0; i < colored_groups.size(); i++) {
     // for (const auto group : colored_groups) {
-        if (i == current_group) {
+        if (i == active_group) {
             continue;
         }
         auto group = colored_groups[i];
@@ -75,7 +74,7 @@ void display() {
 
     // Отрисовка активных примитивов
     glBegin(GL_TRIANGLES);
-    auto group = colored_groups[current_group];
+    auto group = colored_groups[active_group];
     glColor3f(group.color.r, group.color.g, group.color.b);
     for (const auto triag : group.triangles) {
         glVertex2f(triag.v1.x, triag.v1.y);
@@ -109,52 +108,71 @@ bool Mouse(GLFWwindow* window, int button, int action, int mods) {
     return false;
 }
 
-void clicked (Spark::Button *btn) {
-    auto group = colored_groups[current_group];
+void next_group_clicked (Spark::Button *btn) {
+    auto group = colored_groups[active_group];
     auto color = group.color;
     cout << "Нажата зелёная кнопка" << endl;
     colored_groups.push_back({{}, color});
-    current_group++;
+    active_group++;
 }
 
 void rslider_changed (Spark::Slider *slider) {
     auto component = slider->get_value();
     cout << "Red value: " << component << endl;
-    colored_groups[current_group].color.r =  component;
+    colored_groups[active_group].color.r =  component;
 }
 void gslider_changed (Spark::Slider *slider) {
     auto component = slider->get_value();
     cout << "Green value: " << component << endl;
-    colored_groups[current_group].color.g =  component;
+    colored_groups[active_group].color.g =  component;
 }
 void bslider_changed (Spark::Slider *slider) {
     auto component = slider->get_value();
     cout << "Blue value: " << component << endl;
-    colored_groups[current_group].color.b =  component;
+    colored_groups[active_group].color.b =  component;
+}
+
+void rm_primitive_clicked (Spark::Button *btn) {
+    auto &triangles = colored_groups[active_group].triangles;
+    if (triangles.size() > 0) {
+        colored_groups[active_group].triangles.pop_back();
+    }
+}
+void rm_group_clicked (Spark::Button *btn) {
+    if (active_group > 0) {
+        colored_groups.pop_back();
+        active_group--;
+    } else {
+        colored_groups[0].triangles.clear();
+    }
 }
 
 int main(void) {
-
     if (!glfwInit())
         return -1;
 
     GLFWwindow* window = glfwCreateWindow(Width, Height, "Triangle", NULL, NULL);
     Spark::init(window);
 
-    if (!window)
-    {
+    if (!window) {
         glfwTerminate();
         return -1;
     }
     colored_groups.push_back({});
 
+    for (int y = 0; y < 32; y++) {
+        for (int x = 0; x < 32; x++) {
+            active_mask[y][x] = (y-x)%2;
+        }
+    }
+
     // UI
     glfwMakeContextCurrent(window);
     auto main_box = Spark::SidePane(Spark::START, 120, 10);
 
-    auto btn = Spark::Button(100, 40);
-    btn.set_margin(10, 10, 10, 0);
-    main_box.add_child(&btn);
+    auto next_group = Spark::Button(100, 40);
+    next_group.set_margin(10, 10, 10, 0);
+    main_box.add_child(&next_group);
 
     auto rslider = Spark::Slider(100, 40);
     rslider.set_margin(10, 0, 10, 0);
@@ -168,17 +186,26 @@ int main(void) {
     bslider.set_margin(10, 0, 10, 0);
     main_box.add_child(&bslider);
 
+    auto rm_primitive = Spark::Button(100, 40);
+    rm_primitive.set_margin(10, 0, 10, 0);
+    main_box.add_child(&rm_primitive);
+
+    auto rm_group = Spark::Button(100, 40);
+    rm_group.set_margin(10, 0, 10, 0);
+    main_box.add_child(&rm_group);
 
     Spark::add_mouse_callback(Mouse);
-    btn.clicked_connect(clicked);
+    next_group.clicked_connect(next_group_clicked);
     rslider.clicked_connect(rslider_changed);
     gslider.clicked_connect(gslider_changed);
     bslider.clicked_connect(bslider_changed);
-    // colored_groups[0].color = {0, 0, 0};
+    rm_primitive.clicked_connect(rm_primitive_clicked);
+    rm_group.clicked_connect(rm_group_clicked);
     // UI end
 
     while (!glfwWindowShouldClose(window))
     {
+        Spark::loop_iterate();
         display();
         main_box.render();
 

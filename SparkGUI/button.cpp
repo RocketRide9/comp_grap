@@ -1,4 +1,5 @@
 #include <GLFW/glfw3.h>
+#include <iostream>
 #include "button.hpp"
 #include "rect.hpp"
 #include "spark_core.hpp"
@@ -6,7 +7,6 @@
 namespace Spark {
     Button::Button(int width, int height) {
         content_bounds = Rect(0, 0, width, height);
-        register_callbacks();
     }
     void Button::clicked_connect(clicked_callback_func func) {
         clicked_callback = func;
@@ -31,25 +31,20 @@ namespace Spark {
 
         glPopMatrix();
     }
+    bool Button::handle_click (GLFWwindow* window, int button, int action, int mods) {
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+            double _x, _y;
+            glfwGetCursorPos(window, &_x, &_y);
+            std::cout << "Handling click at: " << _x << " " << _y << "\n";
 
-    // Private
-    void Button::register_callbacks() {
-        MouseButtonCallbackFunc f = [this](GLFWwindow* window, int button,
-                                           int action, int mods) {
-            if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-                double _x, _y;
-                glfwGetCursorPos(window, &_x, &_y);
-
-                if (content_bounds.contains(_x, _y)) {
-                    if (clicked_callback != NULL) {
-                        clicked_callback(this);
-                    }
-                    return true;
+            if (content_bounds.contains(_x, _y)) {
+                if (clicked_callback != NULL) {
+                    clicked_callback(this);
                 }
+                return true;
             }
+        }
 
-            return false;
-        };
-        add_mouse_callback(f);
+        return false;
     }
 }

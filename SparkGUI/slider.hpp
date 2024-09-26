@@ -12,12 +12,12 @@ namespace Spark {
         double get_value();
         void render() override;
         // void set_content_size(int width, int height) override;
+        bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
 
         private:
         /* Текущее значение слайдера от 0 до 1 */
         double value = 0;
         clicked_callback_func clicked_callback;
-
-        void register_callbacks() override;
+        int loop_func_id;
     };
 }

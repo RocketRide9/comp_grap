@@ -22,4 +22,7 @@ namespace Spark {
     int Widget::get_width() {
         return margin_start + content_bounds.get_width() + margin_end;
     }
+    bool Widget::handle_click (GLFWwindow* window, int button, int action, int mods) {
+        return false;
+    }
 }

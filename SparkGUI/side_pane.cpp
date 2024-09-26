@@ -1,6 +1,7 @@
 #include "side_pane.hpp"
 #include "rect.hpp"
 #include "spark_core.hpp"
+#include <functional>
 #include <iostream>
 
 namespace Spark {
@@ -22,7 +23,12 @@ namespace Spark {
                 content_bounds = Rect(0, height - size, width, size);
                 break;
         };
-        register_callbacks();
+        using namespace std::placeholders;
+        add_mouse_callback(
+            std::bind(
+                &SidePane::handle_click, this, _1, _2, _3, _4
+            )
+        );
     }
     void SidePane::render() {
         int width, height;
@@ -52,15 +58,29 @@ namespace Spark {
         auto new_pos = Coordinate {sp.x + margin_start, sp.y + margin_top + children_height};
         widget->set_position(new_pos);
 
-        std::cout << "child widget height = " << widget->get_height() << std::endl;
-
         children_height += widget->get_height() + padding;
         std::cout << "childrens height = " << children_height << std::endl;
 
         children.push_back(widget);
     }
 
-    // Private
+    bool SidePane::handle_click (GLFWwindow* window, int button, int action, int mods) {
+        bool capture = false;
+        for (auto c : children) {
+            capture |= c->handle_click(window, button, action, mods);
+        }
+        if (capture) {
+            return true;
+        }
 
-    void SidePane::register_callbacks() {}
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+            double _x, _y;
+            glfwGetCursorPos(window, &_x, &_y);
+
+            if (content_bounds.contains(_x, _y)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
