@@ -1,6 +1,7 @@
 ﻿#include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include "spark_core.hpp"
+#include <iostream>
 #include <vector>
 #include <functional>
 #include <unordered_map>
@@ -23,7 +24,7 @@ namespace Spark {
         }
     }
     void loop_iterate() {
-        for (auto a : loop_funcs) {
+        for (auto &a : loop_funcs) {
             a.second();
         }
     }
@@ -34,11 +35,13 @@ namespace Spark {
     int loop_add(function<void()> func) {
         int res = loop_funcs.size();
         loop_funcs[res] = func;
+        std::cout << "added to loop a function with id: " << res << endl;
 
         return res;
     }
     void loop_remove(int id) {
         loop_funcs.erase(id);
+        std::cout << "removed from loop a function with id: " << id << endl;
     }
 
     void add_mouse_callback(MouseButtonCallbackFunc func) {

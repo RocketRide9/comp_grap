@@ -18,6 +18,6 @@ namespace Spark {
         /* Текущее значение слайдера от 0 до 1 */
         double value = 0;
         clicked_callback_func clicked_callback;
-        int loop_func_id;
+        int loop_func_id = -1;
     };
 }

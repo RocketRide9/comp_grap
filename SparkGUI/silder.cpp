@@ -75,7 +75,10 @@ namespace Spark {
                 return true;
             }
         } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-            Spark::loop_remove(loop_func_id);
+            if (loop_func_id != -1) {
+                Spark::loop_remove(loop_func_id);
+                loop_func_id = -1;
+            }
         }
 
         return false;
