@@ -1,3 +1,5 @@
+#include <GLFW/glfw3.h>
+#include <GL/gl.h>
 #include <algorithm>
 #include <iostream>
 #include "rect.hpp"
@@ -13,6 +15,15 @@ namespace Spark {
     }
     void Slider::clicked_connect(clicked_callback_func func) {
         clicked_callback = func;
+    }
+    void Slider::add_value(double _value) {    
+        double EPS = 1e-15;
+        if (fabs(_value) < EPS || _value < 0)
+            _value = 0;
+        if(fabs(_value - 1) < EPS || _value > 1)
+            _value = 1;
+        this->value = _value;
+        assert(value <= 1 and value >= 0);
     }
     double Slider::get_value() {
         assert(value <= 1 and value >= 0);
@@ -31,7 +42,7 @@ namespace Spark {
         width = content_bounds.get_width();
         height = content_bounds.get_height();
 
-        glColor3f(value, 0, 0);
+        glColor3ub(76, 175, 80);
         glBegin(GL_TRIANGLE_FAN);
         glVertex2f(content_bounds.x1,               content_bounds.y1);
         glVertex2f(content_bounds.x1 + width*value, content_bounds.y1);

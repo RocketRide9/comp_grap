@@ -1,14 +1,12 @@
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
 #pragma once
+#include <GLFW/glfw3.h>
+#include <GL/gl.h>
 #include <cassert>
 #include <functional>
 
 namespace Spark {
 
-    typedef std::function<
-        bool (GLFWwindow* window, int button, int action, int mods)
-        >
+    typedef std::function<bool (GLFWwindow* window, int button, int action, int mods)>
         MouseButtonCallbackFunc;
 
     GLFWwindow* get_main_window();

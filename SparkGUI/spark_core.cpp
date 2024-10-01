@@ -1,10 +1,10 @@
-﻿#include <GL/gl.h>
-#include <GLFW/glfw3.h>
-#include "spark_core.hpp"
+﻿#include <GLFW/glfw3.h>
+#include <GL/gl.h>
 #include <iostream>
 #include <vector>
 #include <functional>
 #include <unordered_map>
+#include "spark_core.hpp"
 
 using namespace std;
 

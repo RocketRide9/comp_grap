@@ -9,6 +9,7 @@ namespace Spark {
 
         Slider(int width, int height);
         void clicked_connect(clicked_callback_func func);
+        void add_value(double value);
         double get_value();
         void render() override;
         // void set_content_size(int width, int height) override;

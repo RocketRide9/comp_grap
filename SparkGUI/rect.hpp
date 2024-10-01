@@ -1,7 +1,6 @@
-#include <GL/gl.h>
+#pragma once
 #include <cassert>
 #include <ostream>
-#pragma once
 
 namespace Spark {
     class Coordinate {

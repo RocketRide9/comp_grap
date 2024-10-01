@@ -1,6 +1,6 @@
 #pragma once
-#include "widget.hpp"
 #include <functional>
+#include "widget.hpp"
 
 namespace Spark {
     class Button final : public Widget {

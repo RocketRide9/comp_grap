@@ -1,6 +1,6 @@
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
 #pragma once
+#include <GLFW/glfw3.h>
+#include <GL/gl.h>
 #include <cassert>
 
 #define INSIDE_SPARK

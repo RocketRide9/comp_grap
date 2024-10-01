@@ -16,6 +16,7 @@ namespace Spark {
         void render() override;
         void add_child(Widget *widget);
         bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
+        void print_edit_mode(bool is_edit_mode);
 
         private:
         std::vector<Widget *> children;
