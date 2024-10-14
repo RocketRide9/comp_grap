@@ -4,6 +4,10 @@
 #include "spark_core.hpp"
 
 namespace Spark {
+    // TODO: поле выделенной области?
+    // оно пригодилось бы для виджетов, которые
+    // хотят располагаться посередине или в конце некоторой
+    // выделенной области
     class Widget {
         public:
         virtual Coordinate get_position();
@@ -18,7 +22,7 @@ namespace Spark {
         int margin_top = 0;
         int margin_start = 0;
         int margin_bottom = 0;
-        Rect content_bounds;
+        Rect content_bounds; // только само содержимое виджета, не включает в себя отступы
         std::vector<MouseButtonCallbackFunc> mouse_callbacks;
     };
 }

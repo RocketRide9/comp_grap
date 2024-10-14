@@ -6,8 +6,6 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
-#include "SparkGUI/rect.hpp"
-#include "SparkGUI/spark_core.hpp"
 #include "SparkGUI/spark_gui.hpp"
 
 using namespace std;
@@ -108,6 +106,7 @@ bool Mouse(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         double _x, _y;
         glfwGetCursorPos(window, &_x, &_y);
+        std::cout << "Handling click at: " << _x << " " << _y << "\n";
         _y = Height - _y;
         GLPoint p;
         p.x = _x / Width * 2 - 1;
@@ -175,7 +174,7 @@ bool edit_click_func(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         double _x, _y;
         glfwGetCursorPos(window, &_x, &_y);
-        if (drawing_bounds.contains(_x, _y)) {
+        if (drawing_bounds.contains(_x, _y) && focused_x != NULL && focused_y != NULL) {
             auto drag_update = [window] {
                 double _x, _y;
                 glfwGetCursorPos(window, &_x, &_y);
@@ -207,41 +206,50 @@ void edit_loop_func() {
     glfwGetCursorPos(window, &cx, &cy);
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
-        cy = Height - cy;
-        cx = cx / Width * 2 - 1;
-        cy = cy / Height * 2 - 1;
-        // найти близжайшую, находящуюся в радиусе 0.1 пикселей
+        // cy = Height - cy;
+        // cx = cx / Width * 2 - 1;
+        // cy = cy / Height * 2 - 1;
+        // найти близжайшую, находящуюся в радиусе 100 пикселей
         // (в системе отсчёта -1 1, -1 1),
         // вершину к курсору и запомнить треугольник, к которой
         // она принадлежит
         GLTriangle* triag = NULL;
         GLfloat* vertex_x = NULL;
         GLfloat* vertex_y = NULL;
-        GLfloat min_distance = 99999;
+        GLfloat min_distance = 9999999;
         for (auto& t : colored_groups[active_group].triangles) {
+            int vx1 = (t.v1.x + 1.) / 2. * Width;
+            int vy1 = (-t.v1.y + 1.) / 2. * Height;
+            int vx2 = (t.v2.x + 1.) / 2. * Width;
+            int vy2 = (-t.v2.y + 1.) / 2. * Height;
+            int vx3 = (t.v3.x + 1.) / 2. * Width;
+            int vy3 = (-t.v3.y + 1.) / 2. * Height;
+            // cout << "Distance: " << distance << endl;
             // без взятия корня для скорости
-            GLfloat distance = pow(t.v1.x - cx, 2) + pow(t.v1.y - cy, 2);
-            if (distance < min_distance && distance < 0.01) {
+            GLfloat distance = pow(vx1 - cx, 2) + pow(vy1 - cy, 2);
+            if (distance < min_distance && distance < 10000) {
                 min_distance = distance;
                 vertex_x = &t.v1.x;
                 vertex_y = &t.v1.y;
             }
 
-            distance = pow(t.v2.x - cx, 2) + pow(t.v2.y - cy, 2);
-            if (distance < min_distance && distance < 0.01) {
+            distance = pow(vx2 - cx, 2) + pow(vy2 - cy, 2);
+            if (distance < min_distance && distance < 10000) {
                 min_distance = distance;
                 vertex_x = &t.v2.x;
                 vertex_y = &t.v2.y;
             }
 
-            distance = pow(t.v3.x - cx, 2) + pow(t.v3.y - cy, 2);
-            if (distance < min_distance && distance < 0.01) {
+            distance = pow(vx3 - cx, 2) + pow(vy3 - cy, 2);
+            if (distance < min_distance && distance < 10000) {
                 min_distance = distance;
                 vertex_x = &t.v3.x;
                 vertex_y = &t.v3.y;
             }
         }
-        cout << "Found some dot nearby" << endl;
+        if (focused_x != NULL) {
+            cout << "Found some dot nearby" << endl;
+        }
 
         focused_x = vertex_x;
         focused_y = vertex_y;
@@ -337,6 +345,7 @@ int main(void) {
     if (!glfwInit())
         return -1;
 
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     GLFWwindow* window = glfwCreateWindow(Width, Height, "Triangle", NULL, NULL);
     Spark::init(window);
 
@@ -354,13 +363,21 @@ int main(void) {
 
     // UI
     glfwMakeContextCurrent(window);
-    auto main_box = Spark::SidePane(Spark::START, 480, 30);
+    auto main_pane = Spark::SidePane(Spark::START, 480);
     drawing_bounds = Spark::Rect(480, 0, Width - 480, Height);
 
+    auto main_box = Spark::Box(Spark::VERTICAL, 10);
+    main_pane.set_child(&main_box);
 
-    auto next_group = Spark::Button(100, 40);
-    next_group.set_margin(10, 20, 10, 0);
-    main_box.add_child(&next_group);
+    auto box1 = Spark::Box(Spark::HORIZONTAL, 5);
+    box1.set_margin(10, 20, 10, 0);
+        auto next_group = Spark::Button(100, 40);
+        next_group.set_margin(10, 20, 10, 0);
+        auto label_next = Spark::Label(20, 20, "add a new group of\nprimitives(N)");
+        label_next.set_margin(10, 20, 10, 0);
+        box1.add_child(&next_group);
+        box1.add_child(&label_next);
+    main_box.add_child(&box1);
 
     rslider.set_margin(10, 0, 10, 0);
     main_box.add_child(&rslider);
@@ -400,8 +417,7 @@ int main(void) {
     {
         Spark::loop_iterate();
         display();
-        main_box.render();
-        main_box.print_edit_mode(is_edit_mode);
+        main_pane.render();
 
         glfwSwapBuffers(window);
         glfwWaitEvents();

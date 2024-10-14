@@ -31,7 +31,7 @@ namespace Spark {
         glVertex2f(content_bounds.x1, content_bounds.y2);
         glEnd();
 
-        glBegin(GL_POINTS); 
+        glBegin(GL_POINTS);
         glColor3f(0.75, 0.75, 0.75);
         glPointSize(4);
         glVertex2f(content_bounds.x1, content_bounds.y1);
@@ -39,16 +39,16 @@ namespace Spark {
         glVertex2f(content_bounds.x2, content_bounds.y2);
         glVertex2f(content_bounds.x1, content_bounds.y2);
         glEnd();
-        
+
         glPopMatrix();
     }
     bool Button::handle_click (GLFWwindow* window, int button, int action, int mods) {
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
             double _x, _y;
             glfwGetCursorPos(window, &_x, &_y);
-            std::cout << "Handling click at: " << _x << " " << _y << "\n";
 
             if (content_bounds.contains(_x, _y)) {
+                std::cout << "Handling click at: " << _x << " " << _y << "\n";
                 if (clicked_callback != NULL) {
                     clicked_callback(this);
                 }
