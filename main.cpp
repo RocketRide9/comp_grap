@@ -389,8 +389,8 @@ int main(void) {
                     .children = {
                         Button::create({
                             .width =  100, .height = 40,
-                                .clicked_callback = next_group_clicked,
-                            }),
+                            .clicked_callback = next_group_clicked,
+                        }),
                         Label::create({
                             .width = 100, .height = 20,
                             .text = "add a new group of\nprimitives(N)"
@@ -403,8 +403,8 @@ int main(void) {
                     .children = {
                         Slider::create({
                             .width =  100, .height = 40,
-                                .changed_callback = rslider_changed,
-                            }),
+                            .changed_callback = rslider_changed,
+                        }),
                         Label::create({
                             .width = 100, .height = 20,
                             .text = "changing the red component\ncolor of the primitive\n(R+ENTER/BACKSPASE to add/sub)"
@@ -417,8 +417,8 @@ int main(void) {
                     .children = {
                         Slider::create({
                             .width = 100, .height = 40,
-                                .changed_callback = gslider_changed,
-                            }),
+                            .changed_callback = gslider_changed,
+                        }),
                         Label::create({
                             .width = 100, .height = 20,
                             .text = "changing the green component\ncolor of the primitive\n(G+ENTER/BACKSPASE to add/sub)"
@@ -431,8 +431,8 @@ int main(void) {
                     .children = {
                         Slider::create({
                             .width =  100, .height = 40,
-                                .changed_callback = bslider_changed,
-                            }),
+                            .changed_callback = bslider_changed,
+                        }),
                         Label::create({
                             .width = 100, .height = 20,
                             .text = "changing the green component\ncolor of the primitive\n(G+ENTER/BACKSPASE to add/sub)"
@@ -445,8 +445,8 @@ int main(void) {
                     .children = {
                         Button::create({
                             .width =  100, .height = 40,
-                                .clicked_callback = rm_group_clicked,
-                            }),
+                            .clicked_callback = rm_group_clicked,
+                        }),
                         Label::create({
                             .width = 100, .height = 20,
                             .text = "deleting the last primitive\nin an activated group(D)"
@@ -459,8 +459,8 @@ int main(void) {
                     .children = {
                         Button::create({
                             .width =  100, .height = 40,
-                                .clicked_callback = rm_primitive_clicked,
-                            }),
+                            .clicked_callback = rm_primitive_clicked,
+                        }),
                         Label::create({
                             .width = 100, .height = 20,
                             .text = "deletion of an\nactivated group(DELETE)"
@@ -473,8 +473,8 @@ int main(void) {
                     .children = {
                         Button::create({
                             .width =  100, .height = 40,
-                                .clicked_callback = edit_mode_clicked,
-                            }),
+                            .clicked_callback = edit_mode_clicked,
+                        }),
                         Label::create({
                             .width = 100, .height = 20,
                             .text = "edit coordinates mode\nfor primitives: enabled\n(press 1 to switch mode)"
