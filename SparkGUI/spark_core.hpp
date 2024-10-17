@@ -5,6 +5,13 @@
 #include <functional>
 
 namespace Spark {
+    template <typename T>
+    struct RequiredField {
+        RequiredField(const T& value) : value(value) {}
+        operator T&() { return value; }
+        operator const T&() const { return value; }
+        T value;
+    };
 
     typedef std::function<bool (GLFWwindow* window, int button, int action, int mods)>
         MouseButtonCallbackFunc;

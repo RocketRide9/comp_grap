@@ -1,19 +1,31 @@
 #pragma once
-#include "rect.hpp"
+#include <memory>
 #include "widget.hpp"
 
 namespace Spark {
+    class Label;
+
+    struct LabelSchema {
+        std::shared_ptr<Label> * bind = nullptr;
+
+        Margin margin = {};
+        RequiredField<int> width;
+        RequiredField<int> height;
+        std::string text = "";
+    };
     // виджет, отображающий текст
     class Label: public Widget {
         public:
+        static std::shared_ptr<Label> create(LabelSchema schema);
+
         bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
         void render() override;
 
-        Label(int width, int height, std::string text);
         void set_text(std::string &text);
         std::string get_text();
 
         protected:
-        std::string text = "";
+        Label() {}
+        std::string text;
     };
 }

@@ -1,8 +1,8 @@
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
 #include <algorithm>
-#include <iostream>
 #include <cmath>
+#include <memory>
 #include "rect.hpp"
 #include "slider.hpp"
 #include "spark_core.hpp"
@@ -10,11 +10,22 @@
 using namespace std;
 
 namespace Spark {
-    Slider::Slider(int width, int height) {
-        content_bounds = Rect(0, 0, width, height);
+    std::shared_ptr<Slider> Slider::create(SliderSchema schema) {
+        auto res = std::shared_ptr<Slider>(new Slider);
+
+        if (schema.bind) {
+            *schema.bind = std::shared_ptr<Slider>(res);
+        }
+        res->margin = schema.margin;
+
+        res->content_bounds = Rect(0, 0, schema.width, schema.height);
+        res->changed_callback = schema.changed_callback;
+
+        return res;
     }
-    void Slider::clicked_connect(clicked_callback_func func) {
-        clicked_callback = func;
+
+    void Slider::changed_connect(changed_callback_func func) {
+        changed_callback = func;
     }
     void Slider::add_value(double _value) {
         double EPS = 1e-15;
@@ -66,8 +77,8 @@ namespace Spark {
             double _x, _y;
             glfwGetCursorPos(window, &_x, &_y);
             if (content_bounds.contains(_x, _y)) {
-                if (clicked_callback != NULL) {
-                    clicked_callback(this);
+                if (changed_callback != NULL) {
+                    changed_callback(this);
                 }
 
                 auto slider_update = [this, window]{
@@ -78,8 +89,8 @@ namespace Spark {
 
                     double value_new = 1. * (x-content_bounds.x1) / content_bounds.get_width();
                     this->value = value_new;
-                    if (clicked_callback != NULL) {
-                        clicked_callback(this);
+                    if (changed_callback != NULL) {
+                        changed_callback(this);
                     }
                 };
                 loop_func_id = Spark::loop_add(slider_update);

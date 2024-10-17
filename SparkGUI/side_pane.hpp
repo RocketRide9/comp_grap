@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "widget.hpp"
 
 namespace Spark {
@@ -8,16 +9,29 @@ namespace Spark {
         END,
         BOTTOM,
     };
+    class SidePane;
+
+    struct SidePaneSchema {
+        std::shared_ptr<SidePane> * bind = nullptr;
+
+        RequiredField<DockSide> side;
+        RequiredField<int> size;
+        std::shared_ptr<Widget> child;
+    };
+
     class SidePane final : public Widget {
         public:
-        SidePane(DockSide side, int size);
+        static std::shared_ptr<SidePane> create(SidePaneSchema schema);
+
+        // SidePane(DockSide side, int size);
         void render() override;
-        void set_child(Widget *widget);
+        void set_child(std::shared_ptr<Widget> widget);
         bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
         // void print_edit_mode(bool is_edit_mode);
 
         private:
-        Widget * child;
+        SidePane() {}
+        std::shared_ptr<Widget> child;
         DockSide dock_side = START;
     };
 }

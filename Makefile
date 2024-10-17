@@ -12,10 +12,10 @@ obj_dir:
 	mkdir -p objs/spark
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(SDIR)/%.hpp
-	g++ -c $< -o $@
+	g++ -c -g $< -o $@
 
 objs/main.o: main.cpp
-	g++ -c main.cpp -o objs/main.o
+	g++ -c -g main.cpp -o objs/main.o
 
 main.out: $(OBJS) objs/main.o
 	g++ $^ -fsanitize=address -Wall -g -lglfw -lGL -o main.out

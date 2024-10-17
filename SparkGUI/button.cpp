@@ -1,14 +1,25 @@
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
 #include <iostream>
+#include <memory>
 #include "button.hpp"
 #include "rect.hpp"
 #include "spark_core.hpp"
 
 namespace Spark {
-    Button::Button(int width, int height) {
-        content_bounds = Rect(0, 0, width, height);
+    std::shared_ptr<Button> Button::create(ButtonSchema schema) {
+        auto res = std::shared_ptr<Button>(new Button);
+
+        if (schema.bind) {
+            *schema.bind = std::shared_ptr<Button>(res);
+        }
+        res->margin = schema.margin;
+        res->content_bounds = Rect(0, 0, schema.width, schema.height);
+        res->clicked_callback = schema.clicked_callback;
+
+        return res;
     }
+
     void Button::clicked_connect(clicked_callback_func func) {
         clicked_callback = func;
     }

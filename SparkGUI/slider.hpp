@@ -1,14 +1,27 @@
 #pragma once
 #include "widget.hpp"
 #include <functional>
+#include <memory>
 
 namespace Spark {
+    class Slider;
+    typedef std::function<void(Slider *)> changed_callback_func;
+
+    struct SliderSchema {
+        std::shared_ptr<Slider> * bind = nullptr;
+
+        Margin margin = {};
+
+        RequiredField<int> width;
+        RequiredField<int> height;
+        changed_callback_func changed_callback = nullptr;
+    };
+
     class Slider final : public Widget {
         public:
-        typedef std::function<void(Slider*)> clicked_callback_func;
+        static std::shared_ptr<Slider> create(SliderSchema schema);
 
-        Slider(int width, int height);
-        void clicked_connect(clicked_callback_func func);
+        void changed_connect(changed_callback_func func);
         void add_value(double value);
         double get_value();
         void render() override;
@@ -16,9 +29,10 @@ namespace Spark {
         bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
 
         private:
+        Slider() {}
         /* Текущее значение слайдера от 0 до 1 */
         double value = 0;
-        clicked_callback_func clicked_callback;
+        changed_callback_func changed_callback;
         int loop_func_id = -1;
     };
 }

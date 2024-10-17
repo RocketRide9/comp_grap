@@ -1,18 +1,32 @@
 #pragma once
 #include <functional>
+#include <memory>
 #include "widget.hpp"
 
 namespace Spark {
+    class Button;
+    typedef std::function<void(Button *)> clicked_callback_func;
+
+    struct ButtonSchema {
+        std::shared_ptr<Button> * bind = nullptr;
+
+        Margin margin = {};
+
+        RequiredField<int> width;
+        RequiredField<int> height;
+        clicked_callback_func clicked_callback = nullptr;
+    };
+
     class Button final : public Widget {
         public:
-        typedef std::function<void(Button*)> clicked_callback_func;
+        static std::shared_ptr<Button> create(ButtonSchema schema);
 
-        Button(int width, int height);
         void clicked_connect(clicked_callback_func func);
         void render() override;
         bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
 
         private:
+        Button() {};
         clicked_callback_func clicked_callback;
     };
 }

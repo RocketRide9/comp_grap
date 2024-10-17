@@ -8,21 +8,27 @@ namespace Spark {
     // оно пригодилось бы для виджетов, которые
     // хотят располагаться посередине или в конце некоторой
     // выделенной области
+    struct Margin {
+        int end = 0;
+        int top = 0;
+        int start = 0;
+        int bottom = 0;
+    };
+
     class Widget {
         public:
         virtual Coordinate get_position();
         virtual int get_height();
         virtual int get_width();
         virtual void set_position(Coordinate coord);
-        virtual void set_margin(int end, int top, int start, int bottom);
+        virtual void set_margin(Margin margin);
         virtual bool handle_click (GLFWwindow* window, int button, int action, int mods);
         virtual void render() = 0;
+
         protected:
-        int margin_end = 0;
-        int margin_top = 0;
-        int margin_start = 0;
-        int margin_bottom = 0;
-        Rect content_bounds; // только само содержимое виджета, не включает в себя отступы
+        Margin margin;
+        Rect content_bounds = {};
+        // только само содержимое виджета, не включает в себя отступы
         std::vector<MouseButtonCallbackFunc> mouse_callbacks;
     };
 }

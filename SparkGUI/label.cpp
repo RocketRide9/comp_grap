@@ -3,10 +3,19 @@
 #include "stb_easy_font.h"
 
 namespace Spark {
-    Label::Label(int width, int height, std::string text) {
-        content_bounds = Rect(0, 0, width, height);
-        this->text = text;
+    std::shared_ptr<Label> Label::create(LabelSchema schema) {
+        auto res = std::shared_ptr<Label>(new Label);
+
+        if (schema.bind) {
+            *schema.bind = std::shared_ptr<Label>(res);
+        }
+        res->margin = schema.margin;
+        res->content_bounds = Rect(0, 0, schema.width, schema.height);
+        res->text = schema.text;
+
+        return res;
     }
+
     void Label::set_text(std::string &text) {
         this->text = text;
     }

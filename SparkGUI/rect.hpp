@@ -24,7 +24,12 @@ namespace Spark {
             x2 = rect.x2;
             y2 = rect.y2;
         }
-        Rect() {}
+        Rect() {
+            x1 = 0;
+            y1 = 0;
+            x2 = 0;
+            y2 = 0;
+        }
         bool contains(int x, int y) const {
             return x1 <= x and x <= x2 and
                 y1 <= y and y <= y2;
@@ -47,8 +52,8 @@ namespace Spark {
             place_at(coord.x, coord.y);
         }
 
-        int x1, y1;
-        int x2, y2;
+        int x1 = 0, y1 = 0;
+        int x2 = 0, y2 = 0;
         private:
     };
     std::ostream& operator<<(std::ostream& os, const Rect& rect);

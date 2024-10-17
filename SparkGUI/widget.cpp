@@ -1,26 +1,23 @@
 
 #include "widget.hpp"
 namespace Spark {
-    void Widget::set_margin(int end, int top, int start, int bottom) {
-        this->margin_end = end;
-        this->margin_top = top;
-        this->margin_start = start;
-        this->margin_bottom = bottom;
+    void Widget::set_margin(Margin margin) {
+        this->margin = margin;
     }
     void Widget::set_position(Coordinate coord) {
-        content_bounds.place_at(coord.x + margin_start, coord.y + margin_top);
+        content_bounds.place_at(coord.x + margin.start, coord.y + margin.top);
     }
     Coordinate Widget::get_position() {
         return Coordinate {
-            .x = content_bounds.x1 - margin_start,
-            .y = content_bounds.y1 - margin_top,
+            .x = content_bounds.x1 - margin.start,
+            .y = content_bounds.y1 - margin.top,
         };
     }
     int Widget::get_height() {
-        return margin_top + content_bounds.get_height() + margin_bottom;
+        return margin.top + content_bounds.get_height() + margin.bottom;
     }
     int Widget::get_width() {
-        return margin_start + content_bounds.get_width() + margin_end;
+        return margin.start + content_bounds.get_width() + margin.end;
     }
     bool Widget::handle_click (GLFWwindow* window, int button, int action, int mods) {
         return false;

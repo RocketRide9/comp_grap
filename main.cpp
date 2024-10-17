@@ -6,12 +6,17 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
+#include "SparkGUI/button.hpp"
+#include "SparkGUI/label.hpp"
+#include "SparkGUI/orientable.hpp"
+#include "SparkGUI/side_pane.hpp"
+#include "SparkGUI/slider.hpp"
 #include "SparkGUI/spark_gui.hpp"
 
 using namespace std;
-Spark::Slider rslider = Spark::Slider(100, 40);
-Spark::Slider gslider = Spark::Slider(100, 40);
-Spark::Slider bslider = Spark::Slider(100, 40);
+shared_ptr<Spark::Slider> rslider;
+shared_ptr<Spark::Slider> gslider;
+shared_ptr<Spark::Slider> bslider;
 
 GLint Width = 1024, Height = 512;
 Spark::Rect drawing_bounds;
@@ -127,7 +132,7 @@ bool Mouse(GLFWwindow* window, int button, int action, int mods) {
     return false;
 }
 
-void next_group_clicked(Spark::Button* btn) {
+void next_group_clicked(Spark::Button *btn) {
     auto group = colored_groups[active_group];
     auto color = group.color;
     cout << "The green button is pressed" << endl;
@@ -135,29 +140,29 @@ void next_group_clicked(Spark::Button* btn) {
     active_group++;
 }
 
-void rslider_changed(Spark::Slider* slider) {
+void rslider_changed(Spark::Slider *slider) {
     auto component = slider->get_value();
     // cout << "Red value: " << component << endl;
     colored_groups[active_group].color.r = component;
 }
-void gslider_changed(Spark::Slider* slider) {
+void gslider_changed(Spark::Slider *slider) {
     auto component = slider->get_value();
     // cout << "Green value: " << component << endl;
     colored_groups[active_group].color.g = component;
 }
-void bslider_changed(Spark::Slider* slider) {
+void bslider_changed(Spark::Slider *slider) {
     auto component = slider->get_value();
     // cout << "Blue value: " << component << endl;
     colored_groups[active_group].color.b = component;
 }
 
-void rm_primitive_clicked(Spark::Button* btn) {
+void rm_primitive_clicked(Spark::Button *btn) {
     auto& triangles = colored_groups[active_group].triangles;
     if (triangles.size() > 0) {
         colored_groups[active_group].triangles.pop_back();
     }
 }
-void rm_group_clicked(Spark::Button* btn) {
+void rm_group_clicked(Spark::Button *btn) {
     if (active_group > 0) {
         colored_groups.pop_back();
         active_group--;
@@ -255,7 +260,7 @@ void edit_loop_func() {
         focused_y = vertex_y;
     }
 }
-void edit_mode_clicked(Spark::Button* btn) {
+void edit_mode_clicked(Spark::Button *btn) {
     is_edit_mode = !is_edit_mode;
     cout << "Is edit mode?: " << is_edit_mode << endl;
     if (is_edit_mode) {
@@ -281,36 +286,36 @@ void key(GLFWwindow* window, int key, int scancode, int action, int mods)
     }
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
-        auto component = rslider.get_value() + 0.05;
+        auto component = rslider->get_value() + 0.05;
         colored_groups[active_group].color.r = component;
-        rslider.add_value(component);
+        rslider->add_value(component);
     }
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
-        auto component = rslider.get_value() - 0.05;
+        auto component = rslider->get_value() - 0.05;
         colored_groups[active_group].color.r = component;
-        rslider.add_value(component);
+        rslider->add_value(component);
     }
 
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
-        auto component = gslider.get_value() + 0.05;
+        auto component = gslider->get_value() + 0.05;
         colored_groups[active_group].color.g = component;
-        gslider.add_value(component);
+        gslider->add_value(component);
     }
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
-        auto component = gslider.get_value() - 0.05;
+        auto component = gslider->get_value() - 0.05;
         colored_groups[active_group].color.g = component;
-        gslider.add_value(component);
+        gslider->add_value(component);
     }
 
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
-        auto component = bslider.get_value() + 0.05;
+        auto component = bslider->get_value() + 0.05;
         colored_groups[active_group].color.b = component;
-        bslider.add_value(component);
+        bslider->add_value(component);
     }
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
-        auto component = bslider.get_value() - 0.05;
+        auto component = bslider->get_value() - 0.05;
         colored_groups[active_group].color.b = component;
-        bslider.add_value(component);
+        bslider->add_value(component);
     }
 
     if (key == GLFW_KEY_D && action == GLFW_PRESS) {
@@ -363,61 +368,134 @@ int main(void) {
 
     // UI
     glfwMakeContextCurrent(window);
-    auto main_pane = Spark::SidePane(Spark::START, 480);
     drawing_bounds = Spark::Rect(480, 0, Width - 480, Height);
 
-    auto main_box = Spark::Box(Spark::VERTICAL, 10);
-    main_pane.set_child(&main_box);
+    // Spark::Rect r;
+    // std::cout << r.get_width();
+    // exit(1);
 
-    auto box1 = Spark::Box(Spark::HORIZONTAL, 5);
-    box1.set_margin(10, 20, 10, 0);
-        auto next_group = Spark::Button(100, 40);
-        next_group.set_margin(10, 20, 10, 0);
-        auto label_next = Spark::Label(20, 20, "add a new group of\nprimitives(N)");
-        label_next.set_margin(10, 20, 10, 0);
-        box1.add_child(&next_group);
-        box1.add_child(&label_next);
-    main_box.add_child(&box1);
-
-    rslider.set_margin(10, 0, 10, 0);
-    main_box.add_child(&rslider);
-
-    gslider.set_margin(10, 0, 10, 0);
-    main_box.add_child(&gslider);
-
-    bslider.set_margin(10, 0, 10, 0);
-    main_box.add_child(&bslider);
-
-    auto rm_primitive = Spark::Button(100, 40);
-    rm_primitive.set_margin(10, 0, 10, 0);
-    main_box.add_child(&rm_primitive);
-
-    auto rm_group = Spark::Button(100, 40);
-    rm_group.set_margin(10, 0, 10, 0);
-    main_box.add_child(&rm_group);
-
-    auto edit_mode = Spark::Button(100, 40);
-    edit_mode.set_margin(10, 0, 10, 0);
-    main_box.add_child(&edit_mode);
+    using namespace Spark;
+    auto main_pane = SidePane::create({
+        .side = START,
+        .size = 480,
+        .child = Box::create({
+            .margin = { .top = 10, .start = 10 },
+            .orientation = VERTICAL,
+            .spacing = 30,
+            .children = {
+                Box::create({
+                    .orientation = HORIZONTAL,
+                    .spacing = 10,
+                    .children = {
+                        Button::create({
+                            .width =  100, .height = 40,
+                                .clicked_callback = next_group_clicked,
+                            }),
+                        Label::create({
+                            .width = 100, .height = 20,
+                            .text = "add a new group of\nprimitives(N)"
+                        })
+                    }
+                }),
+                Box::create({
+                    .orientation = HORIZONTAL,
+                    .spacing = 10,
+                    .children = {
+                        Slider::create({
+                            .width =  100, .height = 40,
+                                .changed_callback = rslider_changed,
+                            }),
+                        Label::create({
+                            .width = 100, .height = 20,
+                            .text = "changing the red component\ncolor of the primitive\n(R+ENTER/BACKSPASE to add/sub)"
+                        })
+                    }
+                }),
+                Box::create({
+                    .orientation = HORIZONTAL,
+                    .spacing = 10,
+                    .children = {
+                        Slider::create({
+                            .width = 100, .height = 40,
+                                .changed_callback = gslider_changed,
+                            }),
+                        Label::create({
+                            .width = 100, .height = 20,
+                            .text = "changing the green component\ncolor of the primitive\n(G+ENTER/BACKSPASE to add/sub)"
+                        })
+                    }
+                }),
+                Box::create({
+                    .orientation = HORIZONTAL,
+                    .spacing = 10,
+                    .children = {
+                        Slider::create({
+                            .width =  100, .height = 40,
+                                .changed_callback = bslider_changed,
+                            }),
+                        Label::create({
+                            .width = 100, .height = 20,
+                            .text = "changing the green component\ncolor of the primitive\n(G+ENTER/BACKSPASE to add/sub)"
+                        })
+                    }
+                }),
+                Box::create({
+                    .orientation = HORIZONTAL,
+                    .spacing = 10,
+                    .children = {
+                        Button::create({
+                            .width =  100, .height = 40,
+                                .clicked_callback = rm_group_clicked,
+                            }),
+                        Label::create({
+                            .width = 100, .height = 20,
+                            .text = "deleting the last primitive\nin an activated group(D)"
+                        })
+                    }
+                }),
+                Box::create({
+                    .orientation = HORIZONTAL,
+                    .spacing = 10,
+                    .children = {
+                        Button::create({
+                            .width =  100, .height = 40,
+                                .clicked_callback = rm_primitive_clicked,
+                            }),
+                        Label::create({
+                            .width = 100, .height = 20,
+                            .text = "deletion of an\nactivated group(DELETE)"
+                        })
+                    }
+                }),
+                Box::create({
+                    .orientation = HORIZONTAL,
+                    .spacing = 10,
+                    .children = {
+                        Button::create({
+                            .width =  100, .height = 40,
+                                .clicked_callback = edit_mode_clicked,
+                            }),
+                        Label::create({
+                            .width = 100, .height = 20,
+                            .text = "edit coordinates mode\nfor primitives: enabled\n(press 1 to switch mode)"
+                        })
+                    }
+                }),
+            }
+         })
+    });
 
     Spark::add_mouse_callback(edit_click_func);
     Spark::add_mouse_callback(Mouse);
-    next_group.clicked_connect(next_group_clicked);
-    rslider.clicked_connect(rslider_changed);
-    gslider.clicked_connect(gslider_changed);
-    bslider.clicked_connect(bslider_changed);
-    rm_primitive.clicked_connect(rm_primitive_clicked);
-    rm_group.clicked_connect(rm_group_clicked);
-    edit_mode.clicked_connect(edit_mode_clicked);
+
     glfwSetKeyCallback(window, key);
     // UI end
-
 
     while (!glfwWindowShouldClose(window))
     {
         Spark::loop_iterate();
         display();
-        main_pane.render();
+        main_pane->render();
 
         glfwSwapBuffers(window);
         glfwWaitEvents();
