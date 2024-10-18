@@ -6,12 +6,7 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
-#include "SparkGUI/button.hpp"
-#include "SparkGUI/label.hpp"
-#include "SparkGUI/orientable.hpp"
-#include "SparkGUI/side_pane.hpp"
-#include "SparkGUI/slider.hpp"
-#include "SparkGUI/spark_gui.hpp"
+#include "SparkGUI/spark.hpp"
 
 using namespace std;
 shared_ptr<Spark::Slider> rslider;

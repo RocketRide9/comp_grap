@@ -1,4 +1,8 @@
 #pragma once
+#if !defined (SPARK_INSIDE) and !defined (SPARK_COMPILATION)
+    #error "This header can't be included directly. Please include "SparkGUI/spark_gui.hpp" instead."
+#endif
+
 #include <functional>
 #include <memory>
 #include "widget.hpp"

@@ -12,7 +12,7 @@ obj_dir:
 	mkdir -p objs/spark
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(SDIR)/%.hpp
-	g++ -c -g $< -o $@
+	g++ -c -g -DCOMPILATION $< -o $@
 
 objs/main.o: main.cpp
 	g++ -c -g main.cpp -o objs/main.o

@@ -3,7 +3,7 @@
 #include <GL/gl.h>
 #include <cassert>
 
-#define INSIDE_SPARK
+#define SPARK_INSIDE
 
 #include "side_pane.hpp" // IWYU pragma: export
 #include "button.hpp" // IWYU pragma: export
@@ -15,4 +15,4 @@
 #include "label.hpp" // IWYU pragma: export
 #include "widget.hpp" // IWYU pragma: export
 
-#undef INSIDE_SPARK
+#undef SPARK_INSIDE
