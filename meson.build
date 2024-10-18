@@ -12,4 +12,5 @@ executable('lab1',
            cpp_args: '-Db_sanitize=address',
            sources: lab_src,
            dependencies: [ogl_dep, glfw_dep],
-           link_with: spark)
+           link_with: spark
+           )

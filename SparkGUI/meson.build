@@ -9,7 +9,7 @@ sources = files(
   'widget.cpp',
 )
 
-spark = library('spark',
+spark = static_library('spark',
                 cpp_args: ['-DSPARK_COMPILATION', '-Db_sanitize=address'],
                 sources: sources,
                 dependencies: [ogl_dep, glfw_dep])
