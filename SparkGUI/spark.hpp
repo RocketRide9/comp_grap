@@ -4,6 +4,7 @@
 #include <cassert>
 
 #define SPARK_INSIDE
+#define SPARK_COMPILATION
 
 #include "side_pane.hpp" // IWYU pragma: export
 #include "button.hpp" // IWYU pragma: export
