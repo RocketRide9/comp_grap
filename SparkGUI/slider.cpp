@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <memory>
 #include "rect.hpp"
@@ -44,7 +45,7 @@ namespace Spark {
         int win_width, win_height;
         auto main_window = get_main_window();
         glfwGetWindowSize(main_window, &win_width, &win_height);
-        glMatrixMode(GL_PROJECTION);
+        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();
         glOrtho(0.0, win_width, win_height, 0, 0, 1);
@@ -81,7 +82,7 @@ namespace Spark {
                     changed_callback(this);
                 }
 
-                auto slider_update = [this, window]{
+                auto slider_update = [this, window](chrono::time_point<chrono::steady_clock> _){
                     double _x, _y;
                     glfwGetCursorPos(window, &_x, &_y);
                     int x = _x;
@@ -92,6 +93,7 @@ namespace Spark {
                     if (changed_callback != NULL) {
                         changed_callback(this);
                     }
+                    return true;
                 };
                 loop_func_id = Spark::loop_add(slider_update);
                 return true;

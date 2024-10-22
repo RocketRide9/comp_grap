@@ -76,7 +76,7 @@ namespace Spark {
     //     int width, height;
     //     auto main_window = get_main_window();
     //     glfwGetWindowSize(main_window, &width, &height);
-    //     glMatrixMode(GL_PROJECTION);
+    //     glMatrixMode(GL_MODELVIEW);
     //     glPushMatrix();
     //     glLoadIdentity();
     //     glOrtho(0.0, width, height, 0, 0, 1);
@@ -93,7 +93,7 @@ namespace Spark {
         int width, height;
         auto main_window = get_main_window();
         glfwGetWindowSize(main_window, &width, &height);
-        glMatrixMode(GL_PROJECTION);
+        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();
         glOrtho(0.0, width, height, 0, 0, 1);

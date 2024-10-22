@@ -1,10 +1,11 @@
 ﻿#include <GLFW/glfw3.h>
 #include <GL/gl.h>
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstddef>
 #include <iostream>
-#include <ostream>
+#include <memory>
 #include <vector>
 #include "SparkGUI/spark.hpp"
 
@@ -13,7 +14,7 @@ shared_ptr<Spark::Slider> rslider;
 shared_ptr<Spark::Slider> gslider;
 shared_ptr<Spark::Slider> bslider;
 
-GLint Width = 1024, Height = 512;
+GLint Width = 1024, Height = 700;
 Spark::Rect drawing_bounds;
 
 int points_count = 0;
@@ -52,6 +53,54 @@ void display() {
     glColor3f(0.0, 0.0, 0.0);
     glPointSize(2);
 
+    // тестовый куб
+    // потом можно удалить
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glTranslatef(drawing_bounds.x1, 0, -200);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    // glOrtho(drawing_bounds.x1, drawing_bounds.x2, drawing_bounds.y2, drawing_bounds.y1, -200, 200);
+    // glFrustum(0, Width, Height, 0, 200, 1000);
+
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.75, 0.1, 0.90);
+    glVertex3f(100, 100, 100); glVertex3f(200, 100, 100); glVertex3f(200, 200, 100); glVertex3f(100, 200, 100);
+    glEnd();
+
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.6, 0, 0.90);
+    glVertex3f(200, 100, 100); glVertex3f(200, 200, 100); glVertex3f(200, 200, 200); glVertex3f(200, 100, 200);
+    glEnd();
+
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.6, 0, 0.90);
+    glVertex3f(100, 100, 100); glVertex3f(100, 200, 100); glVertex3f(100, 200, 200); glVertex3f(100, 100, 200);
+    glEnd();
+
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.6, 0, 0.90);
+    glVertex3f(100, 200, 100); glVertex3f(100, 200, 200); glVertex3f(200, 200, 200); glVertex3f(200, 200, 100);
+    glEnd();
+
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.6, 0, 0.90);
+    glVertex3f(100, 100, 100); glVertex3f(100, 100, 200); glVertex3f(200, 100, 200); glVertex3f(200, 100, 100);
+    glEnd();
+
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.75, 0, 0.20);
+    glVertex3f(100, 100, 200); glVertex3f(200, 100, 200); glVertex3f(200, 200, 200); glVertex3f(100, 200, 200);
+    glEnd();
+
+    glPopMatrix();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
     glBegin(GL_POINTS);
     int points_size = Points.size();
     for (int i = 0; i < points_size % 3; i++) {
@@ -64,7 +113,7 @@ void display() {
     glPolygonStipple(&active_mask[0][0]);
     glEnable(GL_POLYGON_STIPPLE);
     glBegin(GL_TRIANGLES);
-    for (int i = 0; i < colored_groups.size(); i++) {
+    for (unsigned int i = 0; i < colored_groups.size(); i++) {
         if (i == active_group) {
             continue;
         }
@@ -99,7 +148,7 @@ void display() {
     }
 }
 
-bool Mouse(GLFWwindow* window, int button, int action, int mods) {
+bool canvas_click_func(GLFWwindow* window, int button, int action, int mods) {
     if (is_edit_mode) {
         return false;
     }
@@ -107,10 +156,10 @@ bool Mouse(GLFWwindow* window, int button, int action, int mods) {
         double _x, _y;
         glfwGetCursorPos(window, &_x, &_y);
         std::cout << "Handling click at: " << _x << " " << _y << "\n";
-        _y = Height - _y;
+
         GLPoint p;
-        p.x = _x / Width * 2 - 1;
-        p.y = _y / Height * 2 - 1;
+        p.x = _x;
+        p.y = _y;
 
         Points.push_back(p);
         points_count++;
@@ -175,17 +224,17 @@ bool edit_click_func(GLFWwindow* window, int button, int action, int mods) {
         double _x, _y;
         glfwGetCursorPos(window, &_x, &_y);
         if (drawing_bounds.contains(_x, _y) && focused_x != NULL && focused_y != NULL) {
-            auto drag_update = [window] {
+            auto drag_update = [window] (chrono::time_point<chrono::steady_clock> _) {
                 double _x, _y;
                 glfwGetCursorPos(window, &_x, &_y);
                 _x = clamp(_x, 1. * drawing_bounds.x1, 1. * drawing_bounds.x2);
                 _y = clamp(Height - _y, 1. * drawing_bounds.y1, 1. * drawing_bounds.y2);
-                _x = _x / Width * 2 - 1;
-                _y = _y / Height * 2 - 1;
+
                 cout << "Applying new coordinate x to point: " << *focused_x << " -> " << _x << endl;
                 cout << "Applying new coordinate y to point: " << *focused_y << " -> " << _y << endl;
                 *focused_x = _x;
                 *focused_y = _y;
+                return true;
                 };
             edit_click_id = Spark::loop_add(drag_update);
         }
@@ -199,7 +248,7 @@ bool edit_click_func(GLFWwindow* window, int button, int action, int mods) {
     return false;
 }
 int edit_loop_id = -1;
-void edit_loop_func() {
+bool edit_loop_func(chrono::time_point<chrono::steady_clock> _) {
 
     double cx, cy;
     GLFWwindow* window = Spark::get_main_window();
@@ -218,12 +267,14 @@ void edit_loop_func() {
         GLfloat* vertex_y = NULL;
         GLfloat min_distance = 9999999;
         for (auto& t : colored_groups[active_group].triangles) {
-            int vx1 = (t.v1.x + 1.) / 2. * Width;
-            int vy1 = (-t.v1.y + 1.) / 2. * Height;
-            int vx2 = (t.v2.x + 1.) / 2. * Width;
-            int vy2 = (-t.v2.y + 1.) / 2. * Height;
-            int vx3 = (t.v3.x + 1.) / 2. * Width;
-            int vy3 = (-t.v3.y + 1.) / 2. * Height;
+            int vx1 = t.v1.x;
+            int vy1 = t.v1.y;
+
+            int vx2 = t.v2.x;
+            int vy2 = t.v2.y;
+
+            int vx3 = t.v3.x;
+            int vy3 = t.v3.y;
             // cout << "Distance: " << distance << endl;
             // без взятия корня для скорости
             GLfloat distance = pow(vx1 - cx, 2) + pow(vy1 - cy, 2);
@@ -339,38 +390,16 @@ void key(GLFWwindow* window, int key, int scancode, int action, int mods)
             edit_loop_id = -1;
         }
     }
+    if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+        glMatrixMode(GL_MODELVIEW);
+        glTranslatef(10, 0, 0);
+    }
 }
 
-int main(void) {
-    if (!glfwInit())
-        return -1;
-
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    GLFWwindow* window = glfwCreateWindow(Width, Height, "Triangle", NULL, NULL);
-    Spark::init(window);
-
-    if (!window) {
-        glfwTerminate();
-        return -1;
-    }
-    colored_groups.push_back({});
-
-    for (int y = 0; y < 32; y++) {
-        for (int x = 0; x < 32; x++) {
-            active_mask[y][x] = (y - x) % 2;
-        }
-    }
-
-    // UI
-    glfwMakeContextCurrent(window);
-    drawing_bounds = Spark::Rect(480, 0, Width - 480, Height);
-
-    // Spark::Rect r;
-    // std::cout << r.get_width();
-    // exit(1);
-
+void build_ui(shared_ptr<Spark::SidePane> &pane) {
     using namespace Spark;
-    auto main_pane = SidePane::create({
+    SidePane::create({
+        .bind = &pane,
         .side = START,
         .size = 480,
         .child = Box::create({
@@ -479,9 +508,49 @@ int main(void) {
             }
          })
     });
+}
+
+int main(void) {
+    if (!glfwInit())
+        return -1;
+
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    GLFWwindow* window = glfwCreateWindow(Width, Height, "Triangle", NULL, NULL);
+    Spark::init(window);
+
+    if (!window) {
+        glfwTerminate();
+        return -1;
+    }
+    colored_groups.push_back({});
+
+    for (int y = 0; y < 32; y++) {
+        for (int x = 0; x < 32; x++) {
+            active_mask[y][x] = (y - x) % 2;
+        }
+    }
+
+    // перейти в систему координат с начальной точкой в левом верхнем углу окна
+    // перед отрисовкой треугольников надо переходить в систему координат полотна
+    // (переход ещё не сделан)
+    glfwMakeContextCurrent(window);
+    drawing_bounds = Spark::Rect(480, 0, Width - 480, Height);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glOrtho(0.0, Width, Height, 0, 0, 100);
+
+    // UI
+
+    // Spark::Rect r;
+    // std::cout << r.get_width();
+    // exit(1);
+
+    shared_ptr<Spark::SidePane> main_pane;
+    build_ui(main_pane);
 
     Spark::add_mouse_callback(edit_click_func);
-    Spark::add_mouse_callback(Mouse);
+    Spark::add_mouse_callback(canvas_click_func);
 
     glfwSetKeyCallback(window, key);
     // UI end

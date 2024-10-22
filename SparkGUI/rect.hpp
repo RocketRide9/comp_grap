@@ -1,6 +1,6 @@
 #pragma once
 #if !defined (SPARK_INSIDE) and !defined (SPARK_COMPILATION)
-    #error "This header can't be included directly. Please include "SparkGUI/spark_gui.hpp" instead."
+    #error "This header can't be included directly. Please include "SparkGUI/spark.hpp" instead."
 #endif
 
 #include <cassert>
@@ -22,12 +22,12 @@ namespace Spark {
             x2 = x + width;
             y2 = y + height;
         }
-        Rect(const Rect &rect) {
-            x1 = rect.x1;
-            y1 = rect.y1;
-            x2 = rect.x2;
-            y2 = rect.y2;
-        }
+        // Rect(const Rect &rect) {
+        //     x1 = rect.x1;
+        //     y1 = rect.y1;
+        //     x2 = rect.x2;
+        //     y2 = rect.y2;
+        // }
         Rect() {
             x1 = 0;
             y1 = 0;
