@@ -1,6 +1,8 @@
-﻿#include <GLFW/glfw3.h>
+﻿
+#define GLFW_INCLUDE_GLU
+
+#include <GLFW/glfw3.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
 #include <cassert>
 #include <chrono>
 #include <cmath>
