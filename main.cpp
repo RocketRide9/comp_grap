@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
+#include <type_traits>
 #include <vector>
 #include "SparkGUI/spark.hpp"
 
@@ -305,6 +306,8 @@ bool edit_loop_func(chrono::time_point<chrono::steady_clock> _) {
         focused_x = vertex_x;
         focused_y = vertex_y;
     }
+
+    return true;
 }
 void edit_mode_clicked(Spark::Button *btn) {
     is_edit_mode = !is_edit_mode;
