@@ -1,5 +1,6 @@
 #include "label.hpp"
 #include <GL/gl.h>
+#include <algorithm>
 #include "stb_easy_font.h"
 
 namespace Spark {
@@ -10,14 +11,28 @@ namespace Spark {
             *schema.bind = std::shared_ptr<Label>(res);
         }
         res->margin = schema.margin;
-        res->content_bounds = Rect(0, 0, schema.width, schema.height);
         res->text = schema.text;
+
+        int width = std::max(stb_easy_font_width(res->text.c_str()) * 2, schema.width.value);
+        int height = std::max(stb_easy_font_height(res->text.c_str()) * 2, schema.height.value);
+        res->content_bounds = Rect (
+            0, 0,
+            width, height
+        );
+        res->text_color = schema.text_color;
 
         return res;
     }
 
     void Label::set_text(std::string &text) {
         this->text = text;
+
+        int width = std::max(stb_easy_font_width(text.c_str()) * 2, get_width());
+        int height = std::max(stb_easy_font_height(text.c_str()) * 2, get_height());
+        content_bounds = Rect (
+            content_bounds.x1, content_bounds.y2,
+            width, height
+        );
     }
     std::string Label::get_text() {
         return this->text;
@@ -60,6 +75,11 @@ namespace Spark {
         return (unsigned)offset / 64;
     }
     void Label::render() {
+        if (text_color.a == 0)
+        {
+            return;
+        }
+
         int win_width, win_height;
         auto main_window = get_main_window();
         glfwGetWindowSize(main_window, &win_width, &win_height);
@@ -70,9 +90,11 @@ namespace Spark {
 
         // print_string(60, 10, "activation of a\nnew primitive group(N)", 0, 0, 0);
 
+        int x0 = (get_width() - stb_easy_font_width(text.c_str())*2) / 2;
+        int y0 = (get_height() - stb_easy_font_height(text.c_str())*2) / 2;
+
         static char buffer[99999]; // ~500 chars
         int num_quads;
-
         num_quads = _stb_easy_font_print(
             0,
             0,
@@ -81,9 +103,9 @@ namespace Spark {
             buffer, sizeof(buffer)
         );
 
-        glTranslatef(content_bounds.x1, content_bounds.y1, 0);
-        glScalef(2, 2, 1.5);
-        glColor3f(0, 0, 0);
+        glTranslatef(content_bounds.x1 + x0, content_bounds.y1 + y0, 0);
+        glScalef(2, 2, 1);
+        glColor4f(text_color.r, text_color.g, text_color.b, text_color.a);
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(2, GL_FLOAT, 16, buffer);
         glDrawArrays(GL_QUADS, 0, num_quads * 4);

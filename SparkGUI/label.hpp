@@ -15,6 +15,7 @@ namespace Spark {
         Margin margin = {};
         RequiredField<int> width;
         RequiredField<int> height;
+        RGBA text_color = { 0, 0, 0, 1};
         std::string text = "";
     };
     // виджет, отображающий текст
@@ -31,5 +32,6 @@ namespace Spark {
         protected:
         Label() {}
         std::string text;
+        RGBA text_color;
     };
 }

@@ -227,7 +227,7 @@ static int stb_easy_font_print(float x, float y, char *text, unsigned char color
     return (unsigned) offset/64;
 }
 
-static int stb_easy_font_width(char *text)
+static int stb_easy_font_width(const char *text)
 {
     float len = 0;
     float max_len = 0;
@@ -245,7 +245,7 @@ static int stb_easy_font_width(char *text)
     return (int) ceil(max_len);
 }
 
-static int stb_easy_font_height(char *text)
+static int stb_easy_font_height(const char *text)
 {
     float y = 0;
     int nonempty_line=0;
@@ -258,7 +258,7 @@ static int stb_easy_font_height(char *text)
         }
         ++text;
     }
-    return (int) ceil(y + (nonempty_line ? 12 : 0));
+    return (int) ceil(y + (nonempty_line ? 7 : 0));
 }
 #endif
 

@@ -18,6 +18,13 @@ namespace Spark {
         T value;
     };
 
+    struct RGBA {
+        float r;
+        float g;
+        float b;
+        float a;
+    };
+
     typedef std::function<bool (GLFWwindow* window, int button, int action, int mods)>
         MouseButtonCallbackFunc;
 

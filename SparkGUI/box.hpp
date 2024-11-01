@@ -16,8 +16,11 @@ namespace Spark {
         std::shared_ptr<Box> * bind = nullptr;
 
         Margin margin = {};
+        int min_width = 0;
+        int min_height = 0;
         Orientation orientation = VERTICAL;
         int spacing = 0;
+        RGBA bg_color = { 1, 1, 1, 0};
         std::vector<std::shared_ptr<Widget>> children = {};
     };
 
@@ -35,11 +38,18 @@ namespace Spark {
         void set_orientation(Orientation orientation) override;
         Orientation get_orientation() override;
 
+        // кривая заплатка для указания, когда Box должен/ не должен
+        // реагировать на нажатия
+        bool active = true;
+
         private:
         Box() {};
         void _place_child (std::shared_ptr<Widget> widget);
+        void _rem_spacing ();
+        void _add_spacing ();
 
         std::vector<std::shared_ptr<Widget>> children;
+        RGBA bg_color;
         // размер доч. виджетов.
         // высота или ширина в зависимости от направления коробки
         int children_size = 0;

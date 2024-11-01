@@ -6,6 +6,8 @@
 #include <functional>
 #include <memory>
 #include "widget.hpp"
+#include "label.hpp"
+#include "spark.hpp"
 
 namespace Spark {
     class Button;
@@ -15,6 +17,7 @@ namespace Spark {
         std::shared_ptr<Button> * bind = nullptr;
 
         Margin margin = {};
+        std::string text = "";
 
         RequiredField<int> width;
         RequiredField<int> height;
@@ -27,10 +30,13 @@ namespace Spark {
 
         void clicked_connect(clicked_callback_func func);
         void render() override;
+        void set_position(Coordinate coord) override;
         bool handle_click (GLFWwindow* window, int button, int action, int mods) override;
 
         private:
         Button() {};
+        std::shared_ptr<Spark::Label> label;
+        std::string text;
         clicked_callback_func clicked_callback;
     };
 }

@@ -9,8 +9,15 @@
 namespace Spark {
     class Coordinate {
         public:
-        // Coordinate(int x, int y): x(x), y(y) {}
         int x, y;
+
+        Coordinate operator+(const Coordinate &rhs)
+        {
+            return Coordinate {
+                .x = this->x + rhs.x,
+                .y = this->y + rhs.y,
+            };
+        }
     };
     class Rect {
         public:
