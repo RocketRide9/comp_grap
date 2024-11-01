@@ -1013,6 +1013,153 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
     // }
 }
 
+shared_ptr<Spark::Box> popover = nullptr;
+void build_popover () {
+    popover =Spark::Box::create({
+        .bg_color = {0.2, 0.6, 0.2, 1},
+        .children = {
+            Spark::Box::create({
+                .margin = {5, 5, 5, 5},
+                .spacing = 5,
+                .children = {
+                    Spark::Box::create({
+                        .orientation = Spark::HORIZONTAL,
+                        .spacing = 5,
+                        .children = {
+                            Spark::Label::create({
+                                .width = 90,
+                                .height = 30,
+                                .text_color = { 1, 1, 1, 1 },
+                                .text = "X scale:",
+                            }),
+                            Spark::Button::create({
+                                .text = "+",
+                                .width = 50,
+                                .height = 30,
+                                .clicked_callback = [](Spark::Button *_){ sx *= _sx; }
+                            }),
+                            Spark::Button::create({
+                                .text = "-",
+                                .width = 50,
+                                .height = 30,
+                                .clicked_callback = [](Spark::Button *_){ sx /= _sx; }
+                            }),
+                        }
+                    }),
+                    Spark::Box::create({
+                        .orientation = Spark::HORIZONTAL,
+                        .spacing = 5,
+                        .children = {
+                            Spark::Label::create({
+                                .width = 90,
+                                .height = 30,
+                                .text_color = { 1, 1, 1, 1 },
+                                .text = "Y scale:",
+                            }),
+                            Spark::Button::create({
+                                .text = "+",
+                                .width = 50,
+                                .height = 30,
+                                .clicked_callback = [](Spark::Button *_){ sy *= _sy; }
+                            }),
+                            Spark::Button::create({
+                                .text = "-",
+                                .width = 50,
+                                .height = 30,
+                                .clicked_callback = [](Spark::Button *_){ sy /= _sy; }
+                            }),
+                        }
+                    }),
+                    Spark::Box::create({
+                        .orientation = Spark::HORIZONTAL,
+                        .spacing = 5,
+                        .children = {
+                            Spark::Label::create({
+                                .width = 90,
+                                .height = 30,
+                                .text_color = { 1, 1, 1, 1 },
+                                .text = "Z scale:",
+                            }),
+                            Spark::Button::create({
+                                .text = "+",
+                                .width = 50,
+                                .height = 30,
+                                .clicked_callback = [](Spark::Button *_){ sz *= _sz; }
+                            }),
+                            Spark::Button::create({
+                                .text = "-",
+                                .width = 50,
+                                .height = 30,
+                                .clicked_callback = [](Spark::Button *_){ sz /= _sz; }
+                            }),
+                        }
+                    }),
+                    Spark::Button::create({
+                        .text = "Toggle Normals",
+                        .width = 200,
+                        .height = 30,
+                        .clicked_callback = [](Spark::Button *_){ active_normal = !active_normal; }
+                    }),
+                    Spark::Button::create({
+                        .text = "Toggle Smoothing",
+                        .width = 200,
+                        .height = 30,
+                        .clicked_callback = [](Spark::Button *_){ active_smoothing_normal = !active_smoothing_normal; }
+                    }),
+                    Spark::Button::create({
+                        .text = "Toggle Frame",
+                        .width = 200,
+                        .height = 30,
+                        .clicked_callback = [](Spark::Button *_){ active_frame = !active_frame; }
+                    }),
+                    Spark::Button::create({
+                        .text = "Toggle Texture",
+                        .width = 200,
+                        .height = 30,
+                        .clicked_callback = [](Spark::Button *_){ active_tex = !active_tex; }
+                    }),
+                    Spark::Button::create({
+                        .text = "Toggle Projection",
+                        .width = 200,
+                        .height = 30,
+                        .clicked_callback = [](Spark::Button *_){ active_ort_frus = !active_ort_frus; }
+                    })
+                }
+            })
+        }
+    });
+    // по умолчаению PopOver не реагирует на нажатия
+    popover->active = false;
+}
+
+bool right_click(GLFWwindow* window, int button, int action, int mods)
+{
+    double _x, _y;
+    glfwGetCursorPos(window, &_x, &_y);
+    int x = _x;
+    int y = _y;
+
+    if (popover->handle_click(window, button, action, mods)) {
+        return true;
+    }
+
+    if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_RIGHT) {
+        popover->set_position({x, y});
+        popover->active = true;
+        return true;
+    }
+    else if (action == GLFW_PRESS) {
+        if (popover->active) {
+            popover->active = false;
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
 int main() {
     if (!glfwInit())
         return -1;
@@ -1052,6 +1199,7 @@ int main() {
 
     GLFWwindow* window = glfwCreateWindow(Width, Height, "3D", NULL, NULL);
     Spark::init(window);
+    build_popover();
 
     if (!window) {
         glfwTerminate();
@@ -1072,12 +1220,33 @@ int main() {
     // glOrtho(drawing_bounds.x1, drawing_bounds.x2, drawing_bounds.y2, drawing_bounds.y1, -200, 200);
 
     init();
+    Spark::add_mouse_callback(right_click);
     Spark::loop_add(movement_sentry);
     while (!glfwWindowShouldClose(window))
     {
         Spark::loop_iterate();
 
         display();
+
+        glDisable(GL_NORMALIZE);
+        glDisable(GL_LIGHTING);
+        glDisable(GL_LIGHT0);
+        glDisable(GL_COLOR_MATERIAL);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
+
+        glPointSize(0);
+        glLineWidth(0);
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glOrtho(0, Width, Height, 0, 0, 200);
+        if (popover->active)
+        {
+            popover->render();
+        }
         glfwSwapBuffers(window);
         glfwPollEvents();
         // glfwWaitEvents();
