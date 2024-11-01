@@ -68,14 +68,17 @@ namespace Spark {
         glVertex2f(content_bounds.x1, content_bounds.y2);
         glEnd();
 
+        // HACK: в некоторых случаях работает криво
+        /*
         glBegin(GL_POINTS);
-        glColor3f(0.75, 0.75, 0.75);
-        glPointSize(4);
+        glColor3f(0.25, 0.25, 0.25);
+        glPointSize(2);
         glVertex2f(content_bounds.x1, content_bounds.y1);
         glVertex2f(content_bounds.x2, content_bounds.y1);
         glVertex2f(content_bounds.x2, content_bounds.y2);
         glVertex2f(content_bounds.x1, content_bounds.y2);
         glEnd();
+        */
 
         glPopMatrix();
 
