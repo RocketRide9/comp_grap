@@ -92,8 +92,18 @@ void display() {
     glOrtho(0.0, Width, Height, 0, 0, 1);
 
     glScalef(2.0, 2.0, 1.0);
-    print_string((Width - 25.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, "X", 0, 0, 0);
-    print_string((Width / 2.0 + posit_x * Width / 2.0 - 16.0) / 2.0, 5.0, "Y", 0, 0, 0);
+    print_string(
+        (Width - 25.0) / 2.0,
+        (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+        "X",
+        0, 0, 0
+    );
+    print_string(
+        (Width / 2.0 + posit_x * Width / 2.0 - 16.0) / 2.0,
+        5.0,
+        "Y",
+        0, 0, 0
+    );
     string str;
     const char* result;
     h_x = -1.0;
@@ -101,25 +111,51 @@ void display() {
         h_x += 1.0 / 10.0;
         str = to_string(i);
         result = str.c_str();
-        if (str.length() == 2)
-            print_string(((h_x + 1) * Width / 2.0 - 17.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, result, 0, 0, 0);
-        else
-            print_string(((h_x + 1) * Width / 2.0 - 23.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, result, 0, 0, 0);
+        if (str.length() == 2) {
+            print_string(
+                ((h_x + 1) * Width / 2.0 - 17.0) / 2.0,
+                (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+                result,
+                0, 0, 0
+            );
+        } else {
+            print_string(
+                ((h_x + 1) * Width / 2.0 - 23.0) / 2.0,
+                (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+                result,
+                0, 0, 0
+            );
+        }
     }
 
     h_x += 1.0 / 10.0;
     str = to_string(middle_point);
     result = str.c_str();
-    print_string((Width / 2.0 + posit_x * Width / 2.0 - 15.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, result, 0, 0, 0);
+    print_string(
+        (Width / 2.0 + posit_x * Width / 2.0 - 15.0) / 2.0,
+        (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+        result,
+        0, 0, 0
+    );
 
     for (int i = middle_point + 1; i < end_point_x + 1; i++) {
         h_x += 1.0 / 10.0;
         str = to_string(i);
         result = str.c_str();
-        if (str.length() == 1)
-            print_string(((h_x + 1) * Width / 2.0 - 5.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, result, 0, 0, 0);
-        else
-            print_string(((h_x + 1) * Width / 2.0 - 11.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, result, 0, 0, 0);
+        if (str.length() == 1) {
+            print_string(
+                ((h_x + 1) * Width / 2.0 - 5.0) / 2.0,
+                (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+                result, 0, 0, 0
+            );
+        } else {
+            print_string(
+                ((h_x + 1) * Width / 2.0 - 11.0) / 2.0,
+                (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+                result,
+                0, 0, 0
+            );
+        }
     }
 
     h_y = -1.0;
@@ -127,20 +163,43 @@ void display() {
         h_y += 1.0 / 10.0;
         str = to_string(-i);
         result = str.c_str();
-        if(str.length() == 1)
-            print_string((Width / 2.0 + posit_x * Width / 2.0 - 15.0) / 2.0, ((h_y + 1) * Height / 2.0 - 7.0) / 2.0, result, 0, 0, 0);
-        else 
-            print_string((Width / 2.0 + posit_x * Width / 2.0 - 27.0) / 2.0, ((h_y + 1) * Height / 2.0 - 7.0) / 2.0, result, 0, 0, 0);
+        if(str.length() == 1) {
+            print_string(
+                (Width / 2.0 + posit_x * Width / 2.0 - 15.0) / 2.0,
+                ((h_y + 1) * Height / 2.0 - 7.0) / 2.0,
+                result,
+                0, 0, 0
+            );
+        } else {
+            print_string(
+                (Width / 2.0 + posit_x * Width / 2.0 - 27.0) / 2.0,
+                ((h_y + 1) * Height / 2.0 - 7.0) / 2.0,
+                result,
+                0, 0, 0
+            );
+        } 
     }
     h_y += 1.0 / 10.0;
     for (int i = middle_point + 1; i < end_point_y + 1; i++) {
         h_y += 1.0 / 10.0;
         str = to_string(-i);
         result = str.c_str();
-        if (str.length() == 2)
-            print_string((Width / 2.0 + posit_x * Width / 2.0 - 27.0) / 2.0, ((h_y + 1) * Height / 2.0 - 7.0) / 2.0, result, 0, 0, 0);
-        else
-            print_string((Width / 2.0 + posit_x * Width / 2.0 - 39.0) / 2.0, ((h_y + 1) * Height / 2.0 - 7.0) / 2.0, result, 0, 0, 0);
+        if (str.length() == 2) {
+            print_string(
+                (Width / 2.0 + posit_x * Width / 2.0 - 27.0) / 2.0,
+                ((h_y + 1) * Height / 2.0 - 7.0) / 2.0,
+                result,
+                0, 0, 0
+            );
+        }
+        else {
+            print_string(
+                (Width / 2.0 + posit_x * Width / 2.0 - 39.0) / 2.0,
+                ((h_y + 1) * Height / 2.0 - 7.0) / 2.0,
+                result,
+                0, 0, 0
+            );
+        }
     }
     glPopMatrix();
 
@@ -173,8 +232,12 @@ void display() {
         glLineWidth(2);
         glColor3f(0.0, 0.0, 0.0);
         glBegin(GL_LINE_STRIP);
-        for (int i = 0; i < SplineGraph.size(); i++)
-            glVertex2f(SplineGraph[i].x / 10.0 + posit_x, SplineGraph[i].y / 10.0 + posit_y);
+        for (int i = 0; i < SplineGraph.size(); i++) {
+            glVertex2f(
+                SplineGraph[i].x / 10.0 + posit_x,
+                SplineGraph[i].y / 10.0 + posit_y
+            );
+        }
         glEnd();
     }
 
@@ -183,7 +246,8 @@ void display() {
 void ConvertPointToCoord(GLPoint p) {
     p.x *= 10.0; p.y *= 10.0;
     PointCoord.push_back(p);
-    cout << "Point coord (x, y): (" << PointCoord[points_count - 1].x << "," << PointCoord[points_count - 1].y << ")\n";
+    cout << "Point coord (x, y): (" << PointCoord[points_count - 1].x
+         << "," << PointCoord[points_count - 1].y << ")\n";
 }
 
 void reshape(GLFWwindow* window, int width, int height) {
