@@ -118,20 +118,33 @@ void display() {
         float value_scaling = i * scale;
         str = NumToString(value_scaling);
         result = str.c_str();
-        print_string(((h_x + 1) * Width / 2.0 - 5.0 - str.length() * 6.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, result, 0, 0, 0);
+        print_string(
+            ((h_x + 1) * Width / 2.0 - 5.0 - str.length() * 6.0) / 2.0,
+            (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+            result,
+            0, 0, 0
+        );
     }
 
     h_x += 1.0 / 10.0;
     str = to_string(middle_point);
     result = str.c_str();
-    print_string((Width / 2.0 + posit_x * Width / 2.0 - 15.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, result, 0, 0, 0);
+    print_string(
+        (Width / 2.0 + posit_x * Width / 2.0 - 15.0) / 2.0,
+        (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+        result, 0, 0, 0
+    );
 
     for (int i = middle_point + 1; i < end_point_x + 1; i++) {
         h_x += 1.0 / 10.0;
         float value_scaling = i * scale;
         str = NumToString(value_scaling);
         result = str.c_str();
-        print_string(((h_x + 1) * Width / 2.0 + 1 - str.length() * 6.0) / 2.0, (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0, result, 0, 0, 0);
+        print_string(
+            ((h_x + 1) * Width / 2.0 + 1 - str.length() * 6.0) / 2.0,
+            (Height / 2.0 - posit_y * Height / 2.0 + 10.0) / 2.0,
+            result, 0, 0, 0
+        );
     }
 
     h_y = -1.0;
@@ -140,7 +153,12 @@ void display() {
         float value_scaling = -i * scale;
         str = NumToString(value_scaling);
         result = str.c_str();
-        print_string((Width / 2.0 + posit_x * Width / 2.0 - 3 - str.length() * 12.0) / 2.0, ((h_y + 1) * Height / 2.0 - 7.0) / 2.0, result, 0, 0, 0);
+        print_string(
+            (Width / 2.0 + posit_x * Width / 2.0 - 3 - str.length() * 12.0) / 2.0,
+            ((h_y + 1) * Height / 2.0 - 7.0) / 2.0,
+            result,
+            0, 0, 0
+        );
     }
     h_y += 1.0 / 10.0;
     for (int i = middle_point + 1; i < end_point_y + 1; i++) {
@@ -148,7 +166,11 @@ void display() {
         float value_scaling = -i * scale;
         str = NumToString(value_scaling);
         result = str.c_str();
-        print_string((Width / 2.0 + posit_x * Width / 2.0 - 3 - str.length() * 12.0) / 2.0, ((h_y + 1) * Height / 2.0 - 7.0) / 2.0, result, 0, 0, 0);
+        print_string(
+            (Width / 2.0 + posit_x * Width / 2.0 - 3 - str.length() * 12.0) / 2.0,
+            ((h_y + 1) * Height / 2.0 - 7.0) / 2.0,
+            result, 0, 0, 0
+        );
     }
     glPopMatrix();
 
@@ -188,7 +210,10 @@ void display() {
         glColor3f(0.0, 0.0, 0.0);
         glBegin(GL_LINE_STRIP);
         for (int i = 0; i < SplineGraph.size(); i++)
-            glVertex2f(SplineGraph[i].x / 10.0 + posit_x * scale, SplineGraph[i].y / 10.0 + posit_y * scale);
+            glVertex2f(
+                SplineGraph[i].x / 10.0 + posit_x * scale,
+                SplineGraph[i].y / 10.0 + posit_y * scale
+            );
         glEnd();
     }
     glPopMatrix();
@@ -197,8 +222,12 @@ void display() {
 void ConvertPixelToCoord(GLPoint p) {
     p.x *= 10.0; p.y *= 10.0;
     PointCoord.push_back(p);
-    sort(PointCoord.begin(), PointCoord.end(), [](const GLPoint& a, const GLPoint& b) {return a.x < b.x; });
-    cout << "Point coord (x, y): (" << PointCoord[points_count - 1].x << "," << PointCoord[points_count - 1].y << ")\n";
+    sort(
+        PointCoord.begin(), PointCoord.end(), [](const GLPoint& a, const GLPoint& b)
+        {return a.x < b.x; }
+    );
+    cout << "Point coord (x, y): (" << PointCoord[points_count - 1].x
+         << "," << PointCoord[points_count - 1].y << ")\n";
 }
 
 void reshape(GLFWwindow* window, int width, int height) {
@@ -217,7 +246,10 @@ void mouse(GLFWwindow* window, int button, int action, int mode) {
 
         PixelCoord.push_back(p);
         points_count++;
-        sort(PixelCoord.begin(), PixelCoord.end(), [](const GLPoint& a, const GLPoint& b) {return a.x < b.x;});
+        sort(
+            PixelCoord.begin(), PixelCoord.end(), [](const GLPoint& a, const GLPoint& b)
+            {return a.x < b.x;}
+        );
 
         cout << "\nPixel coord (x, y): (" << p.x << "," << p.y << ")\n";
         ConvertPixelToCoord(p);
