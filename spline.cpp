@@ -32,13 +32,13 @@ struct Vec3f {
 
 struct GLPoint {
     GLfloat x, y;
-    
+
     GLPoint operator*(float const& rhs) const {
         auto n = GLPoint(*this);
 
         n.x *= rhs;
         n.y *= rhs;
-        
+
         return n;
     }
 
@@ -47,7 +47,7 @@ struct GLPoint {
 
         n.x /= rhs;
         n.y /= rhs;
-        
+
         return n;
     }
 
@@ -59,7 +59,7 @@ struct GLPoint {
 
         return n;
     }
-    
+
     GLPoint operator-(GLPoint const& rhs) const {
         auto n = GLPoint(*this);
 
@@ -70,7 +70,7 @@ struct GLPoint {
     }
 };
 
-Vec3f graph_line_color = {0, 0, 0};
+Vec3f graph_line_color = { 0, 0, 0 };
 int graph_line_size = 2;
 vector <GLPoint> PixelCoord;
 vector <GLPoint> PointCoord;
@@ -80,14 +80,14 @@ vector <GLPoint> SplineGraph;
 enum ObjType {
     MARKS,
     GRAPH,
-    
+
     OBJS_NUM
 } target_obj = GRAPH;
 
 enum ParamType {
     COLOR,
     SIZE,
-    
+
     PARAMS_NUM
 } target_param = SIZE;
 
@@ -95,7 +95,7 @@ enum ColorComponent {
     RED,
     GREEN,
     BLUE,
-    
+
     COMPONENTS_NUM
 } target_component = RED;
 
@@ -138,45 +138,45 @@ string NumToString(float num) {
 
 int mark_type = 1;
 int marks_size = 5;
-Vec3f marks_color = {1, 0, 0};
+Vec3f marks_color = { 1, 0, 0 };
 const int marks_count = 2;
 // Нарисовать отметки для массива PixelCoord
 // середины отметок совпадают с координатами точек 
 void draw_marks(int type, int size, Vec3f color) {
-    
+
     switch (type) {
         // квадраты
-        case 0:
-            glPointSize(size);
-            glColor3f(color.x, color.y, color.z);
-            glBegin(GL_POINTS);
-            for (int i = 0; i < (int)PixelCoord.size(); i++) {
-                glVertex2f(PixelCoord[i].x + posit_x * scale, PixelCoord[i].y + posit_y * scale);
-            }
-            glEnd();
-            break;
-        // треугольники
-        case 1: {
-            glPointSize(1);
-            glColor3f(color.x, color.y, color.z);
-            glBegin(GL_TRIANGLES);
-            for (int i = 0; i < (int)PixelCoord.size(); i++) {
-                auto coord = PixelCoord[i] + GLPoint(posit_x*scale, posit_y*scale);
-                
-                auto v1 = coord - GLPoint(size/2./Width*4, size/2./Height*4);
-                auto v2 = v1 + GLPoint(size/(float)Width*4., 0);
-                auto v3 = coord + GLPoint(0, size/2./Height*4);
-                glVertex2f(v1.x, v1.y);
-                glVertex2f(v2.x, v2.y);
-                glVertex2f(v3.x, v3.y);
-            }
-            glEnd();
-            break;
+    case 0:
+        glPointSize(size);
+        glColor3f(color.x, color.y, color.z);
+        glBegin(GL_POINTS);
+        for (int i = 0; i < (int)PixelCoord.size(); i++) {
+            glVertex2f(PixelCoord[i].x + posit_x * scale, PixelCoord[i].y + posit_y * scale);
         }
-        default:
-            fprintf(stderr, "Неверный тип отметки");
-            exit(1);
-            break;
+        glEnd();
+        break;
+        // треугольники
+    case 1: {
+        glPointSize(1);
+        glColor3f(color.x, color.y, color.z);
+        glBegin(GL_TRIANGLES);
+        for (int i = 0; i < (int)PixelCoord.size(); i++) {
+            auto coord = PixelCoord[i] + GLPoint(posit_x * scale, posit_y * scale);
+
+            auto v1 = coord - GLPoint(size / 2. / Width * 4, size / 2. / Height * 4) * scale;
+            auto v2 = v1 + GLPoint(size / (float)Width * 4., 0) * scale;
+            auto v3 = coord + GLPoint(0, size / 2. / Height * 4) * scale;
+            glVertex2f(v1.x, v1.y);
+            glVertex2f(v2.x, v2.y);
+            glVertex2f(v3.x, v3.y);
+        }
+        glEnd();
+        break;
+    }
+    default:
+        fprintf(stderr, "Неверный тип отметки");
+        exit(1);
+        break;
     }
 }
 
@@ -185,48 +185,48 @@ void draw_status() {
     glPushMatrix();
     glLoadIdentity();
     glOrtho(0.0, Width, Height, 0, 0, 1);
-    
+
     string status = "";
-    
+
     switch (target_obj) {
-        case MARKS:
-            status += "Marks: ";
-            break;
-        case GRAPH:
-            status += "Graph line: ";
-            break;
-        case OBJS_NUM:
-            exit(1);
-            break;
+    case MARKS:
+        status += "Marks: ";
+        break;
+    case GRAPH:
+        status += "Graph line: ";
+        break;
+    case OBJS_NUM:
+        exit(1);
+        break;
     }
-    
+
     switch (target_param) {
-        case COLOR:
-            switch (target_component) {
-                case RED:
-                    status += "Red component";
-                    break;
-                case GREEN:
-                    status += "Green component";
-                    break;
-                case BLUE:
-                    status += "Blue component";
-                    break;
-                case COMPONENTS_NUM:
-                    break;
-            }
+    case COLOR:
+        switch (target_component) {
+        case RED:
+            status += "Red component";
             break;
-        case SIZE:
-            status += "size";
+        case GREEN:
+            status += "Green component";
             break;
-        case PARAMS_NUM:
-            exit(1);
+        case BLUE:
+            status += "Blue component";
             break;
+        case COMPONENTS_NUM:
+            break;
+        }
+        break;
+    case SIZE:
+        status += "size";
+        break;
+    case PARAMS_NUM:
+        exit(1);
+        break;
     }
 
     glScalef(2, 2, 0);
     print_string(10, 10, status.c_str(), 0.6, 0, 1);
-    
+
     glPopMatrix();
 }
 
@@ -250,9 +250,29 @@ void display() {
 
     glEnd();
 
+    glLineWidth(graph_line_size);
+    glColor3f(0, 0, 0);
+    glBegin(GL_LINES);
+
+    if (show_median) {
+        GLfloat median_value;
+        int middle = PointCoord.size() / 2;
+        if (PointCoord.size() % 2 == 0) {
+            median_value = (PointCoord[middle - 1].y + PointCoord[middle].y) / 2.;
+        }
+        else {
+            median_value = PointCoord[middle].y;
+        }
+        glVertex2f(-1.0f, median_value / (10 * scale) + posit_y);
+        glVertex2f(1.0f, median_value / (10 * scale) + posit_y);
+    }
+
+    glEnd();
+
     //Рисуем разбиения для красивой разметки
     glLineWidth(1);
     glBegin(GL_LINES);
+    glColor3f(0.0, 0.0, 1.0);
     float h_x = -1.0;
     float h_y = -1.0;
     while (h_x < 1.0) {
@@ -372,7 +392,7 @@ void display() {
                 SplineGraph[i].y / 10.0 + posit_y * scale
             );
         glEnd();
-        
+
         // Вывод ломаной кривой
         if (show_polyline) {
             glLineWidth(graph_line_size);
@@ -386,27 +406,11 @@ void display() {
             }
             glEnd();
         }
-        
-        if (show_median) {
-            GLfloat median_value;
-            int middle = PointCoord.size() / 2;
-            if (PointCoord.size() % 2 == 0) {
-                median_value = (PointCoord[middle - 1].y + PointCoord[middle].y) / 2.;
-            } else {
-                median_value = PointCoord[middle].y;
-            }
-            glLineWidth(graph_line_size);
-            glColor3f(0, 0, 0);
-            glBegin(GL_LINE);
-            glVertex2f(-2, median_value / 10.0 + posit_x * scale);
-            glVertex2f(2, median_value / 10.0 + posit_x * scale);
-            glEnd();
-        }
     }
-    
+
     draw_marks(mark_type, marks_size, marks_color);
     glPopMatrix();
-    
+
     draw_status();
 }
 
@@ -451,9 +455,9 @@ void mouse(GLFWwindow* window, int button, int action, int mode) {
 
 void key(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    (void) action;
-    (void) scancode;
-    (void) mods;
+    (void)action;
+    (void)scancode;
+    (void)mods;
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
@@ -483,18 +487,18 @@ void key(GLFWwindow* window, int key, int scancode, int action, int mods)
     if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
         scale *= 2;
     }
-    
+
     if (key == GLFW_KEY_M && action == GLFW_PRESS) {
-        mark_type = (mark_type + 1)%marks_count;
+        mark_type = (mark_type + 1) % marks_count;
     }
 
     if (key == GLFW_KEY_O && action == GLFW_PRESS) {
-        target_obj = (ObjType) ((target_obj + 1)%OBJS_NUM);
+        target_obj = (ObjType)((target_obj + 1) % OBJS_NUM);
     }
     if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-        target_param = (ParamType) ((target_param + 1)%PARAMS_NUM);
+        target_param = (ParamType)((target_param + 1) % PARAMS_NUM);
     }
-    
+
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
         target_component = RED;
     }
@@ -504,7 +508,7 @@ void key(GLFWwindow* window, int key, int scancode, int action, int mods)
     if (key == GLFW_KEY_B && action == GLFW_PRESS) {
         target_component = BLUE;
     }
-    
+
     if ((key == GLFW_KEY_EQUAL || key == GLFW_KEY_MINUS) && action == GLFW_PRESS) {
         // использовать знак, чтобы не обрабатывать по-отдельности 
         // нажатие на - и = (+ без шифта)
@@ -515,61 +519,61 @@ void key(GLFWwindow* window, int key, int scancode, int action, int mods)
         if (key == GLFW_KEY_MINUS) {
             sign = -1;
         }
-        
+
         switch (target_obj) {
-            case MARKS:
-                switch (target_param) {
-                    case COLOR:
-                        switch (target_component) {
-                            case RED:
-                                marks_color.x += sign * 0.1;
-                                break;
-                            case GREEN:
-                                marks_color.y += sign * 0.1;
-                                break;
-                            case BLUE:
-                                marks_color.z += sign * 0.1;
-                                break;
-                            case COMPONENTS_NUM:
-                                exit(1);
-                                break;
-                        }
-                        break;
-                    case SIZE:
-                        marks_size += sign * 1;
-                        break;
-                    case PARAMS_NUM:
-                        exit(1);
-                        break;
+        case MARKS:
+            switch (target_param) {
+            case COLOR:
+                switch (target_component) {
+                case RED:
+                    marks_color.x += sign * 0.1;
+                    break;
+                case GREEN:
+                    marks_color.y += sign * 0.1;
+                    break;
+                case BLUE:
+                    marks_color.z += sign * 0.1;
+                    break;
+                case COMPONENTS_NUM:
+                    exit(1);
+                    break;
                 }
                 break;
-            case GRAPH:
-                switch (target_param) {
-                    case COLOR:
-                        switch (target_component) {
-                            case RED:
-                                graph_line_color.x += sign * 0.1;
-                                break;
-                            case GREEN:
-                                graph_line_color.y += sign * 0.1;
-                                break;
-                            case BLUE:
-                                graph_line_color.z += sign * 0.1;
-                                break;
-                            case COMPONENTS_NUM:
-                                break;
-                        }
-                        break;
-                    case SIZE:
-                        graph_line_size += sign * 1;
-                        break;
-                    case PARAMS_NUM:
-                        break;
-                }
+            case SIZE:
+                marks_size += sign * 1;
                 break;
-            case OBJS_NUM:
+            case PARAMS_NUM:
                 exit(1);
                 break;
+            }
+            break;
+        case GRAPH:
+            switch (target_param) {
+            case COLOR:
+                switch (target_component) {
+                case RED:
+                    graph_line_color.x += sign * 0.1;
+                    break;
+                case GREEN:
+                    graph_line_color.y += sign * 0.1;
+                    break;
+                case BLUE:
+                    graph_line_color.z += sign * 0.1;
+                    break;
+                case COMPONENTS_NUM:
+                    break;
+                }
+                break;
+            case SIZE:
+                graph_line_size += sign * 1;
+                break;
+            case PARAMS_NUM:
+                break;
+            }
+            break;
+        case OBJS_NUM:
+            exit(1);
+            break;
         }
     }
     if (key == GLFW_KEY_COMMA && action == GLFW_PRESS) {
